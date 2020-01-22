@@ -32,6 +32,7 @@ func init() {
 	rootCmd.AddCommand(importCmd)
 }
 
+//nolint:funlen
 func runImport(cmd *cobra.Command, args []string) error {
 	configPathName := path.Join(pathSeparator, args[0])
 
@@ -68,6 +69,8 @@ func runImport(cmd *cobra.Command, args []string) error {
 		return fmt.Errorf("failed to get configuration store: %w", err)
 	}
 
+	importedCount := 0
+
 	for key, value := range toBeImported {
 		parameterName := store.ParameterName{
 			ParameterPath: configPathName,
@@ -84,13 +87,21 @@ func runImport(cmd *cobra.Command, args []string) error {
 				},
 			}
 
+			// Skip writing configuration if value is unchanged
+			currentConfig, err := configStore.Get(parameterName, -1)
+			if err == nil && value == *currentConfig.Value && currentConfig.Meta.Secure == val.Meta.Secure {
+				continue
+			}
+
 			if err := configStore.Put(parameterName, val); err != nil {
 				return fmt.Errorf("failed to write configuration `%s`: %w", v, err)
 			}
+
+			importedCount++
 		}
 	}
 
-	fmt.Fprintf(os.Stdout, "Successfully imported %d configurations\n", len(toBeImported))
+	fmt.Fprintf(os.Stdout, "Successfully imported %d/%d configurations\n", importedCount, len(toBeImported))
 
 	return nil
 }
