@@ -93,6 +93,8 @@ func runImport(cmd *cobra.Command, args []string) error {
 				continue
 			}
 
+			fmt.Printf("Importing `%s`\n", path.Join(configPathName, key))
+
 			if err := configStore.Put(parameterName, val); err != nil {
 				return fmt.Errorf("failed to write configuration `%s`: %w", v, err)
 			}
