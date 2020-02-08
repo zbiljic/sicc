@@ -25,6 +25,7 @@ dist/darwin_amd64/$(PROJECT_NAME):
 	@echo "==> Building $@ ..."
 	@CGO_ENABLED=0 GOOS=darwin GOARCH=amd64 \
 		go build \
+		-trimpath \
 		-ldflags $(GO_LDFLAGS) \
 		-o "$@"
 
@@ -32,6 +33,7 @@ dist/linux_amd64/$(PROJECT_NAME):
 	@echo "==> Building $@ ..."
 	@CGO_ENABLED=0 GOOS=linux GOARCH=amd64 \
 		go build \
+		-trimpath \
 		-ldflags $(GO_LDFLAGS) \
 		-o "$@"
 
@@ -39,6 +41,7 @@ dist/windows_amd64/$(PROJECT_NAME):
 	@echo "==> Building $@ ..."
 	@CGO_ENABLED=0 GOOS=windows GOARCH=amd64 \
 		go build \
+		-trimpath \
 		-ldflags $(GO_LDFLAGS) \
 		-o "$@.exe"
 
